@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from app.models import IngestRequest, IngestResponse, QueryRequest, QueryResponse
 from app import ingest, retrieve, generate
@@ -14,10 +14,10 @@ def health() -> dict[str, str]:
 @app.post("/ingest", response_model=IngestResponse)
 def ingest_route(body: IngestRequest) -> IngestResponse:
     try:
-        chunks_indexed = ingest.ingest_document(body.filename)
-    except NotImplementedError:
-        chunks_indexed = 0
-    return IngestResponse(filename=body.filename, chunks_indexed=chunks_indexed, status="stub")
+        chunks = ingest.ingest_document(body.filename)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"File not found: {body.filename}")
+    return IngestResponse(filename=body.filename, chunks_indexed=len(chunks), status="ok")
 
 
 @app.post("/query", response_model=QueryResponse)
