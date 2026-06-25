@@ -44,3 +44,8 @@ def test_query_stub():
 def test_query_validation():
     response = client.post("/query", json={})
     assert response.status_code == 422
+
+
+def test_ingest_path_traversal_returns_400():
+    response = client.post("/ingest", json={"filename": "../../etc/passwd"})
+    assert response.status_code == 400

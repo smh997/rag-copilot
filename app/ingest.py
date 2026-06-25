@@ -11,7 +11,9 @@ _ENCODING = "cl100k_base"
 
 
 def ingest_document(filename: str) -> list[dict]:
-    path = DATA_DIR / filename
+    path = (DATA_DIR / filename).resolve()
+    if not path.is_relative_to(DATA_DIR.resolve()):
+        raise ValueError(f"Invalid filename: {filename}")
     if not path.exists():
         raise FileNotFoundError(f"PDF not found: {path}")
 

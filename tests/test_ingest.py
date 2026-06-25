@@ -1,6 +1,3 @@
-import os
-os.environ.setdefault("ANTHROPIC_API_KEY", "test-key")
-
 from unittest.mock import MagicMock, patch
 import pytest
 import tiktoken

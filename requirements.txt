@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 pydantic-settings
-pypdf
-tiktoken
+pypdf>=4,<5
+tiktoken>=0.6,<1
 pytest
 httpx

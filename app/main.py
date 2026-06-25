@@ -15,6 +15,8 @@ def health() -> dict[str, str]:
 def ingest_route(body: IngestRequest) -> IngestResponse:
     try:
         chunks = ingest.ingest_document(body.filename)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid filename: {body.filename}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"File not found: {body.filename}")
     return IngestResponse(filename=body.filename, chunks_indexed=len(chunks), status="ok")
