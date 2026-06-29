@@ -5,8 +5,15 @@ from app.config import settings
 
 CHROMA_PATH = "./chroma_db"
 
-_co = cohere.Client(api_key=settings.cohere_api_key)
+_co: cohere.Client | None = None
 _client: chromadb.ClientAPI | None = None
+
+
+def _get_co() -> cohere.Client:
+    global _co
+    if _co is None:
+        _co = cohere.Client(api_key=settings.cohere_api_key)
+    return _co
 
 
 def _get_client() -> chromadb.ClientAPI:
@@ -18,7 +25,7 @@ def _get_client() -> chromadb.ClientAPI:
 
 def embed_chunks(chunks: list[dict]) -> list[list[float]]:
     texts = [c["text"] for c in chunks]
-    response = _co.embed(texts=texts, model=settings.embedding_model, input_type="search_document")
+    response = _get_co().embed(texts=texts, model=settings.embedding_model, input_type="search_document")
     return response.embeddings
 
 

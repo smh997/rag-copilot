@@ -50,3 +50,11 @@ def test_query_validation():
 def test_ingest_path_traversal_returns_400():
     response = client.post("/ingest", json={"filename": "../../etc/passwd"})
     assert response.status_code == 400
+
+
+def test_ingest_store_failure_returns_500():
+    mock_chunks = [{"text": "chunk one", "source": "doc.pdf", "page": 1}]
+    with patch("app.ingest.ingest_document", return_value=mock_chunks), \
+         patch("app.store.store_chunks", side_effect=Exception("Chroma unavailable")):
+        response = client.post("/ingest", json={"filename": "doc.pdf"})
+    assert response.status_code == 500

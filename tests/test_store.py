@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import app.store as store
+from app.config import settings
 
 SAMPLE_CHUNKS = [
     {"text": "chunk one", "source": "doc.pdf", "page": 1},
@@ -29,7 +30,7 @@ def test_embed_chunks_single_batched_call():
 
     mock_co.embed.assert_called_once_with(
         texts=["chunk one", "chunk two"],
-        model="embed-english-v3.0",
+        model=settings.embedding_model,
         input_type="search_document",
     )
     assert result == SAMPLE_EMBEDDINGS

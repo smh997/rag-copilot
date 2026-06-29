@@ -19,7 +19,10 @@ def ingest_route(body: IngestRequest) -> IngestResponse:
         raise HTTPException(status_code=400, detail=f"Invalid filename: {body.filename}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"File not found: {body.filename}")
-    count = store.store_chunks(chunks)
+    try:
+        count = store.store_chunks(chunks)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Store error: {exc}")
     return IngestResponse(filename=body.filename, chunks_indexed=count, status="ok")
 
 
