@@ -23,7 +23,8 @@ def test_ingest_route_chunk_count():
         {"text": "chunk one", "source": "doc.pdf", "page": 1},
         {"text": "chunk two", "source": "doc.pdf", "page": 1},
     ]
-    with patch("app.ingest.ingest_document", return_value=mock_chunks):
+    with patch("app.ingest.ingest_document", return_value=mock_chunks), \
+         patch("app.store.store_chunks", return_value=2):
         response = client.post("/ingest", json={"filename": "doc.pdf"})
     assert response.status_code == 200
     body = response.json()
