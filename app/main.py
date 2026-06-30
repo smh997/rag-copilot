@@ -28,9 +28,9 @@ def ingest_route(body: IngestRequest) -> IngestResponse:
 
 @app.post("/query", response_model=QueryResponse)
 def query_route(body: QueryRequest) -> QueryResponse:
+    chunks = retrieve.retrieve_chunks(body.question, body.top_k)
     try:
-        chunks = retrieve.retrieve_chunks(body.question, body.top_k)
-        answer = generate.generate_answer(body.question, chunks)
-    except NotImplementedError:
-        answer = "stub"
-    return QueryResponse(answer=answer, citations=[], question=body.question)
+        result = generate.generate_answer(body.question, chunks)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Generation error: {exc}")
+    return QueryResponse(answer=result["answer"], citations=result["citations"], question=body.question)

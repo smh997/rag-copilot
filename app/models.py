@@ -18,5 +18,5 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str
-    citations: list[str]
+    citations: list[dict]
     question: str

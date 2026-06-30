@@ -33,13 +33,19 @@ def test_ingest_route_chunk_count():
     assert body["filename"] == "doc.pdf"
 
 
-def test_query_stub():
-    with patch("app.retrieve.retrieve_chunks", return_value=[]):
+def test_query_returns_generate_answer():
+    mock_chunks = [{"text": "chunk", "source": "doc.pdf", "page": 1, "distance": 0.1}]
+    mock_result = {
+        "answer": "The answer is 42.",
+        "citations": [{"source": "doc.pdf", "page": 1}],
+    }
+    with patch("app.retrieve.retrieve_chunks", return_value=mock_chunks), \
+         patch("app.generate.generate_answer", return_value=mock_result):
         response = client.post("/query", json={"question": "What is RLHF?", "top_k": 5})
     assert response.status_code == 200
     body = response.json()
-    assert body["answer"] == "stub"
-    assert body["citations"] == []
+    assert body["answer"] == "The answer is 42."
+    assert body["citations"] == [{"source": "doc.pdf", "page": 1}]
     assert body["question"] == "What is RLHF?"
 
 

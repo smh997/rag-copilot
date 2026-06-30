@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     chunk_size: int = 500
     chunk_overlap: int = 50
     embedding_model: str = "embed-english-v3.0"
+    generation_model: str = "command-a-03-2025"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
