@@ -91,7 +91,7 @@ curl -X POST http://localhost:8000/ingest \
 ```bash
 curl -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
-  -d '{"question": "What is multi-head attention?", "top_k": 5}'
+  -d '{"question": "What is multi-head attention?", "top_k": 3}'
 ```
 
 **Grounded answer — question the sources can answer:**
@@ -113,7 +113,7 @@ curl -X POST http://localhost:8000/query \
 ```bash
 curl -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
-  -d '{"question": "What is the capital of France?", "top_k": 5}'
+  -d '{"question": "What is the capital of France?", "top_k": 3}'
 ```
 
 ```json
