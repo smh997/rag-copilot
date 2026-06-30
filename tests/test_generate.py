@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from app.generate import generate_answer
+from app.generate import NO_INFO_MESSAGE, generate_answer
 
 
 def _make_chunk(text: str, source: str, page: int) -> dict:
@@ -11,7 +11,7 @@ def test_empty_chunks_returns_fallback_without_api_call():
     with patch("app.generate._get_co") as mock_get_co:
         result = generate_answer("What is RLHF?", [])
 
-    assert result["answer"] == "I don't have enough information to answer that."
+    assert result["answer"] == NO_INFO_MESSAGE
     assert result["citations"] == []
     mock_get_co.assert_not_called()
 
@@ -34,6 +34,18 @@ def test_non_empty_chunks_calls_chat_with_correct_message():
     assert "p.4" in message
     assert "ONLY the provided sources" in message
     assert result["answer"] == "Self-attention is key."
+
+
+def test_no_info_response_suppresses_citations():
+    chunk = _make_chunk("Some irrelevant text.", "paper.pdf", 1)
+    mock_co = MagicMock()
+    mock_co.chat.return_value = MagicMock(text=NO_INFO_MESSAGE)
+
+    with patch("app.generate._get_co", return_value=mock_co):
+        result = generate_answer("What is quantum gravity?", [chunk])
+
+    assert result["answer"] == NO_INFO_MESSAGE
+    assert result["citations"] == []
 
 
 def test_citations_deduped_by_source_and_page():

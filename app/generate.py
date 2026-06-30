@@ -1,9 +1,11 @@
 from app.config import settings
 from app.store import _get_co
 
+NO_INFO_MESSAGE = "The sources do not contain the answer to this question."
+
 _PREAMBLE = (
     "Answer the question using ONLY the provided sources. "
-    "If the sources don't contain the answer, say so. "
+    f"If the sources don't contain the answer, reply with EXACTLY: {NO_INFO_MESSAGE} "
     "Be concise.\n\n"
 )
 
@@ -11,7 +13,7 @@ _PREAMBLE = (
 def generate_answer(question: str, chunks: list[dict]) -> dict:
     if not chunks:
         return {
-            "answer": "I don't have enough information to answer that.",
+            "answer": NO_INFO_MESSAGE,
             "citations": [],
         }
 
@@ -25,6 +27,9 @@ def generate_answer(question: str, chunks: list[dict]) -> dict:
 
     response = _get_co().chat(model=settings.generation_model, message=assembled)
     answer = response.text
+
+    if NO_INFO_MESSAGE.lower() in answer.strip().lower():
+        return {"answer": NO_INFO_MESSAGE, "citations": []}
 
     seen = set()
     citations = []
