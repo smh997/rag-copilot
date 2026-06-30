@@ -1,14 +1,25 @@
-def retrieve_chunks(question: str, top_k: int) -> list[str]:
-    """
-    Embed the user's question using the configured embedding model, then
-    perform a nearest-neighbour search against the vector store to find
-    the top_k most semantically similar text chunks.
+from app.config import settings
+from app.store import _get_client, _get_co
 
-    Args:
-        question: The user's natural-language query.
-        top_k: Number of chunks to return, ordered by relevance descending.
 
-    Returns:
-        A list of chunk text strings ready to be used as LLM context.
-    """
-    raise NotImplementedError
+def retrieve_chunks(question: str, top_k: int = 5) -> list[dict]:
+    query_vector = _get_co().embed(
+        texts=[question],
+        model=settings.embedding_model,
+        input_type="search_query",
+    ).embeddings[0]
+
+    try:
+        collection = _get_client().get_or_create_collection("papers")
+        results = collection.query(query_embeddings=[query_vector], n_results=top_k)
+    except Exception:
+        return []
+
+    return [
+        {"text": doc, "source": meta["source"], "page": meta["page"], "distance": dist}
+        for doc, meta, dist in zip(
+            results["documents"][0],
+            results["metadatas"][0],
+            results["distances"][0],
+        )
+    ]

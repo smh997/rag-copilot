@@ -34,7 +34,8 @@ def test_ingest_route_chunk_count():
 
 
 def test_query_stub():
-    response = client.post("/query", json={"question": "What is RLHF?", "top_k": 5})
+    with patch("app.retrieve.retrieve_chunks", return_value=[]):
+        response = client.post("/query", json={"question": "What is RLHF?", "top_k": 5})
     assert response.status_code == 200
     body = response.json()
     assert body["answer"] == "stub"
