@@ -83,3 +83,12 @@ def test_empty_collection_returns_empty_list():
         result = retrieve_chunks(QUERY, top_k=5)
 
     assert result == []
+
+
+def test_embed_failure_returns_empty_list():
+    mock_co = MagicMock()
+    mock_co.embed.side_effect = Exception("Cohere unavailable")
+    mock_client, _ = _mock_client()
+    with patch.object(store, "_co", mock_co), patch.object(store, "_client", mock_client):
+        result = retrieve_chunks(QUERY, top_k=5)
+    assert result == []
