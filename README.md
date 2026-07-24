@@ -2,6 +2,10 @@
 
 A FastAPI service that answers questions about PDF documents using retrieval-augmented generation — grounded answers with page citations, and an honest refusal when the answer isn't in the sources.
 
+![Demo](docs/demo.gif)
+
+*A grounded, cited answer followed by the no-info refusal.*
+
 **What this demonstrates:** RAG pipeline design, dense embeddings, vector similarity search, and grounded generation with citations.
 
 ---

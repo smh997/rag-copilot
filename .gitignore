@@ -4,4 +4,4 @@ __pycache__/
 .venv/
 chroma_db/
 rag-notes.md
-docs/
+docs/superpowers/
